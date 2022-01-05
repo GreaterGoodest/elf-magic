@@ -11,8 +11,8 @@ void encrypt_me(){
 
 int main()
 {
-    int retval = 0;
-
+    int32_t retval = 0;
+    
     puts("Main function");
     address_t page_aligned_addr = (address_t)encrypt_me & 0xFFF000;
     retval = mprotect((void *)page_aligned_addr, 4096, PROT_READ | PROT_WRITE | PROT_EXEC);
