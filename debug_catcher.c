@@ -50,6 +50,35 @@ uint32_t check_tracer(){
     return 0;
 }
 
+int32_t virtualization_check()
+{
+    int32_t retval = 0;
+    int32_t fd = 0;
+
+    fd = open("/proc/cpuinfo", O_RDONLY);
+    if(fd == -1)
+    {
+        perror("open /proc/cpuinfo");
+        return errno;
+    }
+
+    char buff[1028];
+    retval = read(fd, buff, sizeof(buff));
+    if (retval == -1)
+    {
+        perror("read /proc/cpuinfo");
+        return errno;
+    }    
+
+    const char *hyper_string = "hypervisor";    
+    if (strstr(buff, hyper_string))
+    {
+        puts("We're virtualized!");
+        exit(0);
+    }
+    return 0;
+}
+
 int main()
 {
     int retval = check_tracer();    
@@ -58,4 +87,13 @@ int main()
         puts("check tracer failed");
         return retval;
     }
+
+    retval = virtualization_check();
+    if (retval != 0)
+    {
+        puts("virtualization check failed");
+        return retval;
+    }
+
+    puts("No Spy Found...");
 }
